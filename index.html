@@ -52,9 +52,13 @@
         transition-duration: 300ms;
         transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
       }
-      .each-product img {
-        width: 200px;
-        height: 150px;
+      .each-product .img-div {
+        width: 300px;
+        height: 300px;
+      }
+      .each-product .img-div img {
+        width: 100%;
+        height: 100%;
         object-fit: cover;
         margin: 10px;
       }
@@ -326,11 +330,14 @@
         item.classList.add("each-product");
         item.classList.add("card");
 
+        let imgDiv = document.createElement('div')
+        imgDiv.classList.add('img-div')
         let productImg = document.createElement("img");
         productImg.src = element.images[0];
         productImg.classList.add("card-img-top");
         productImg.id = `product-img-${element.id}`;
-        item.appendChild(productImg);
+        imgDiv.appendChild(productImg);
+        item.appendChild(imgDiv);
 
         //////////////
         const discountPercentage = document.createElement("div");
