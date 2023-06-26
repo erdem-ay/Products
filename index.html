@@ -430,7 +430,7 @@
       cartDiv.id = "openModal";
 
       let cartIcon = document.createElement("img");
-      cartIcon.src = "https://cdn-icons-png.flaticon.com/128/3144/3144456.png";
+      cartIcon.src = "assets/cart.svg";
       cartIcon.classList.add("cart-icon");
 
       let cartBadge = document.createElement("div");
@@ -506,7 +506,7 @@
             const dataCellDelete = document.createElement("td");
             let newElmDelete = document.createElement("img");
             newElmDelete.src =
-              "https://cdn-icons-png.flaticon.com/128/6861/6861362.png";
+              "assets/delete.svg";
             newElmDelete.id = "modal-delete";
             newElmDelete.onclick = () => handleDeleteProduct(element);
             dataCellDelete.appendChild(newElmDelete);
