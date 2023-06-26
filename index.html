@@ -20,24 +20,21 @@
       .product-wrapper {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 10px; /* Adjust the gap between divs as desired */
+        gap: 10px;
         margin: 100px 10px 20px;
       }
       @media only screen and (max-width: 1200px) {
         .product-wrapper {
           grid-template-columns: repeat(2, 1fr);
-      
         }
       }
       @media only screen and (max-width: 768px) {
         .product-wrapper {
           grid-template-columns: repeat(1, 1fr);
-      
         }
       }
       .each-product {
         padding: 10px;
-        /* border: 1px solid grey; */
         border-radius: 10px;
         display: flex;
         flex-direction: column;
@@ -108,12 +105,11 @@
         justify-content: center;
         width: 50%;
       }
-      .cart-elm {
-        position: fixed;
-        top: 10px;
-        right: 10px;
+      #cart-elm {
+        display: block;
         padding: 10px;
-        background-color: #ffdd83;
+        margin-right: 20px;
+        background-color: red;
         border-radius: 50%;
         cursor: pointer;
         z-index: 5;
@@ -121,13 +117,14 @@
       .cart-icon {
         width: 40px;
       }
-      .cart-div {
+      #cart-div {
         position: relative;
+        cursor: pointer;
       }
       .cart-badge {
         position: absolute;
-        top: -6px;
-        right: -6px;
+        top: -12px;
+        right: -12px;
         background-color: #e21818;
         width: 24px;
         height: 24px;
@@ -146,15 +143,18 @@
       .plus-container {
         border: 1px solid #98dfd6;
         border-radius: 0px 20px 20px 0px;
-        padding: 10px 30px 10px 20px;
+        padding: 10px 20px 10px 20px;
         color: #00235b;
         cursor: pointer;
+        user-select: none;
       }
       .minus-container {
         border: 1px solid #98dfd6;
         border-radius: 20px 0px 0px 20px;
-        padding: 10px 30px 10px 20px;
+        padding: 10px 20px 10px 20px;
         color: #00235b;
+        cursor: pointer;
+        user-select: none;
       }
       .counter-container {
         padding: 10px;
@@ -170,6 +170,7 @@
         align-items: center;
         border-radius: 20px;
         cursor: pointer;
+        user-select: none;
       }
       .hidden {
         display: none;
@@ -229,6 +230,7 @@
         cursor: pointer;
         text-align: center;
         width: 30px;
+        user-select: none;
       }
       table {
         text-align: center;
@@ -245,8 +247,10 @@
       .header {
         background-color: #ffdd83;
         height: 80px;
+        gap: 8px;
+        padding: 0px 20px;
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
         position: fixed;
         top: 0px;
@@ -256,12 +260,32 @@
         box-shadow: 0 20px 25px -5px rgb(255, 221, 131, 0.3),
           0 8px 10px -6px rgb(255, 221, 131, 0.3);
       }
+      .header img{
+        width: 30px;
+        margin-bottom: 10px;
+      }
+      @media only screen and (max-width: 768px) {
+        .modal-content {
+          margin: 5px auto;
+          padding: 30px 8px;
+          width: 90%;
+          margin-top: 100px;
+        }
+        .modal-product-image {
+          width: 60px;
+          height: auto;
+          object-fit: cover;
+          margin: 2px;
+        }
+      }
     </style>
   </head>
   <body>
     <div id="products-div">
       <div class="header">
-        <h2 class="text-center">Products</h2>
+        <img src="./assets/shop.svg" alt="">
+        <h2 class="text-center">Serenay Shop</h2>
+        <div id="cart-div"></div>
       </div>
     </div>
 
@@ -275,6 +299,12 @@
     <script src="./product.js"></script>
     <script>
       let cartContent = [];
+      let cartContentFromLocalStorage = localStorage.getItem("cartContent");
+
+      if (cartContentFromLocalStorage) {
+        cartContent = JSON.parse(cartContentFromLocalStorage);
+     
+      }
       function handleChangeImage(img, elm) {
         let imgElm = document.getElementById(`product-img-${elm.id}`);
 
@@ -285,7 +315,10 @@
         let counter = document.getElementById(`counter-${elm?.id}`);
 
         let _counter = Number(counter?.innerHTML);
-        if (_counter > 0) {
+        if (counter >= 1 ) {
+          _counter = _counter + type;
+          counter.innerHTML = _counter;
+        }else if(_counter >=2 ){
           _counter = _counter + type;
           counter.innerHTML = _counter;
         }
@@ -305,6 +338,7 @@
         } else {
           cartContent.push({ amount, elm, elmId: elm?.id });
         }
+        localStorage.setItem("cartContent", JSON.stringify(cartContent));
 
         let cartBadge = document.getElementsByClassName("cart-badge");
         cartBadge[0].innerHTML = cartContent.length;
@@ -315,7 +349,23 @@
         );
 
         cartContent = _cartContent;
+        localStorage.setItem("cartContent", JSON.stringify(cartContent));
         updateCartContentModal();
+      }
+
+      function handleChangeModalAmount(e, elm) {
+        let isExist = cartContent.findIndex(
+          (each) => each?.elmId === elm?.elmId
+        );
+
+        if (isExist > -1) {
+          cartContent[isExist] = {
+            ...cartContent[isExist],
+            amount: Number(event.target.value),
+          };
+        }
+
+        localStorage.setItem("cartContent", JSON.stringify(cartContent));
       }
     </script>
 
@@ -330,8 +380,8 @@
         item.classList.add("each-product");
         item.classList.add("card");
 
-        let imgDiv = document.createElement('div')
-        imgDiv.classList.add('img-div')
+        let imgDiv = document.createElement("div");
+        imgDiv.classList.add("img-div");
         let productImg = document.createElement("img");
         productImg.src = element.images[0];
         productImg.classList.add("card-img-top");
@@ -339,12 +389,10 @@
         imgDiv.appendChild(productImg);
         item.appendChild(imgDiv);
 
-        //////////////
         const discountPercentage = document.createElement("div");
         discountPercentage.classList.add("discount-percentage");
         discountPercentage.innerHTML = `%${element?.discountPercentage}`;
         item.appendChild(discountPercentage);
-        //////////////
 
         const cardBody = document.createElement("div");
         cardBody.classList.add("card-body");
@@ -354,13 +402,11 @@
 
         cardBody.appendChild(description);
 
-        ///////////////
         let price = document.createElement("p");
         price.classList.add("price");
         price.innerText = `$ ${element.price}`;
         cardBody.appendChild(price);
 
-        /////////////
         let thumbnailImages = document.createElement("div");
         thumbnailImages.classList.add("thumbnail-wrapper");
 
@@ -375,7 +421,6 @@
 
         cardBody.appendChild(thumbnailImages);
 
-        ////////////
         let bottomSection = document.createElement("div");
         bottomSection.classList.add("bottom-section");
 
@@ -413,11 +458,8 @@
         ////ADD TO CART/////
 
         cardBody.appendChild(bottomSection);
-        ////////////
 
         item.appendChild(cardBody);
-
-        /////////////
 
         productsHTML.appendChild(item);
       });
@@ -427,20 +469,25 @@
       ///////Cart Div/////
       let cartDiv = document.createElement("div");
       cartDiv.classList.add("cart-elm");
+      // let cartDiv = document.getElementById('cart-elm')
+      console.log(cartDiv)
       cartDiv.id = "openModal";
 
       let cartIcon = document.createElement("img");
-      cartIcon.src = "assets/cart.svg";
+      cartIcon.src = "./assets/cart.svg";
       cartIcon.classList.add("cart-icon");
 
       let cartBadge = document.createElement("div");
       cartBadge.classList.add("cart-badge");
-      cartBadge.innerHTML = 0;
+      cartBadge.innerHTML = cartContent.length;
 
       cartDiv.appendChild(cartIcon);
       cartDiv.appendChild(cartBadge);
 
-      productsDiv.appendChild(cartDiv);
+      // productsDiv.appendChild(cartDiv);
+      let headerElm = document.querySelector('#products-div .header #cart-div')
+      console.log(headerElm)
+      headerElm.appendChild(cartDiv)
 
       var modal = document.getElementById("cart-modal");
       var btn = document.getElementById("openModal");
@@ -498,15 +545,31 @@
             dataRow.appendChild(dataCellTitle);
 
             const dataCellAmount = document.createElement("td");
-            let newElmAmount = document.createElement("h3");
-            newElmAmount.innerHTML = element.amount;
+            let newElmAmount = document.createElement("select");
+            newElmAmount.onchange = (e) => handleChangeModalAmount(e, element);
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach((nb) => {
+              let newElmAmountOption = document.createElement("option");
+              newElmAmountOption.classList.add(
+                "form-select",
+                "form-select-lg",
+                "mb-3"
+              );
+              newElmAmountOption.value = nb;
+              newElmAmountOption.ariaLabel = ".form-select-lg example";
+              if (nb === element.amount) {
+                newElmAmountOption.selected = true;
+              }
+              newElmAmountOption.innerHTML = nb;
+              newElmAmount.appendChild(newElmAmountOption);
+            });
+            // newElmAmount.innerHTML = element.amount;
+            newElmAmount.classList.add = "modal-amount";
             dataCellAmount.appendChild(newElmAmount);
             dataRow.appendChild(dataCellAmount);
 
             const dataCellDelete = document.createElement("td");
             let newElmDelete = document.createElement("img");
-            newElmDelete.src =
-              "assets/delete.svg";
+            newElmDelete.src = "./assets/delete.svg";
             newElmDelete.id = "modal-delete";
             newElmDelete.onclick = () => handleDeleteProduct(element);
             dataCellDelete.appendChild(newElmDelete);
