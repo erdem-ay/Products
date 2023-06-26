@@ -315,10 +315,7 @@
         let counter = document.getElementById(`counter-${elm?.id}`);
 
         let _counter = Number(counter?.innerHTML);
-        if (counter >= 1 ) {
-          _counter = _counter + type;
-          counter.innerHTML = _counter;
-        }else if(_counter >=2 ){
+        if (_counter >= 1 && _counter + type > 0) {
           _counter = _counter + type;
           counter.innerHTML = _counter;
         }
