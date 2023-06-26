@@ -278,6 +278,9 @@
           margin: 2px;
         }
       }
+      .product-title{
+        margin: 5px 0px;
+      }
     </style>
   </head>
   <body>
@@ -394,6 +397,11 @@
         const cardBody = document.createElement("div");
         cardBody.classList.add("card-body");
 
+        const title = document.createElement("h2");
+        title.innerHTML = element.title;
+        title.classList.add('product-title')
+        cardBody.appendChild(title);
+        
         const description = document.createElement("p");
         description.innerHTML = element.description;
 
@@ -466,8 +474,6 @@
       ///////Cart Div/////
       let cartDiv = document.createElement("div");
       cartDiv.classList.add("cart-elm");
-      // let cartDiv = document.getElementById('cart-elm')
-      console.log(cartDiv)
       cartDiv.id = "openModal";
 
       let cartIcon = document.createElement("img");
@@ -481,9 +487,7 @@
       cartDiv.appendChild(cartIcon);
       cartDiv.appendChild(cartBadge);
 
-      // productsDiv.appendChild(cartDiv);
       let headerElm = document.querySelector('#products-div .header #cart-div')
-      console.log(headerElm)
       headerElm.appendChild(cartDiv)
 
       var modal = document.getElementById("cart-modal");
@@ -576,9 +580,9 @@
           });
           cartContentModal.appendChild(table);
 
-          let cartBadge = document.getElementsByClassName("cart-badge");
-          cartBadge[0].innerHTML = cartContent.length;
         }
+        let cartBadge = document.getElementsByClassName("cart-badge");
+        cartBadge[0].innerHTML = cartContent.length;
       }
     </script>
   </body>
